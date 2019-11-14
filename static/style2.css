@@ -1,0 +1,36 @@
+.background{
+    
+    background: url(arcade.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  
+}
+.resize{
+    height: 150px;
+  width: 500px;
+  display: block;
+  margin-left:auto;
+  margin-right:auto;
+}
+table, th, td {
+	
+	color: blue;
+  border: none;
+  margin: auto;  
+  padding: 2px;
+  text-align: center;
+}
+.btn{
+   
+    border-radius: 4px;
+    background-color: #5c51f3;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 16px;
+    margin: 0 auto; display: inline-block; width: 30%
+}
+a{
+    color:black
+}
