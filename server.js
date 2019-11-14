@@ -28,7 +28,16 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+  
 
+  /*/get show highscore of users
+  app.get('/home', function(req, res, next) {
+    users.findAll().then(i =>{
+      i.gethighscore().then(h=>{
+        res.render('home', {user:i, highscore:r})
+      })
+    })
+  });*/
 
 app.get("/index", (req,res) =>{
     res.render("login_register");
@@ -70,7 +79,7 @@ app.get("/index", (req,res) =>{
       }
     
 
-     //bcrypt to hash pw and save new user
+     /*/bcrypt to hash pw and save new user
      //also add new user to session
       bcrypt.hash(req.body.pw,10,(err, hash) =>{
         if(err){
@@ -91,7 +100,7 @@ app.get("/index", (req,res) =>{
       
     }
 
-    })
+    })*/
   }
   
 //login button pressed
@@ -106,12 +115,14 @@ app.get("/index", (req,res) =>{
       if(req.body.pw.trim().length <= 4) {
           errors.push({msg: "password short"});
       }
-      ////////duplicate query search database
+      ////////duplicate query search database here
+      //if(...)
       
    
 
-            // the compare method takes the salt from the stored hash instead of generating
+            /*/ the compare method takes the salt from the stored hash instead of generating
             //  a new one, so the resulting hash will match
+            //compare user password in database
             User.findOne({
               where:{username:username}
             }).then(users =>{
@@ -123,7 +134,7 @@ app.get("/index", (req,res) =>{
                 errors.push({msg: 'credentials invalid'})
               }
             })
-          })
+          })*/
 
                //if error, back to Lr page
       if(errors.length > 0)
@@ -138,6 +149,7 @@ app.get("/index", (req,res) =>{
    
      }
 
+     res.render("home")
 
 
       })
