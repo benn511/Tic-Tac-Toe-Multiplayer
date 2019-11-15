@@ -45,6 +45,12 @@ a {
   -moz-transition: all 0.4s;
 }
 
+
+.highscore_login{
+  color: yellow;
+  text-align:center
+}
+
 a:focus {
 	outline: none !important;
 }

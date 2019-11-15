@@ -35,7 +35,11 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 
 app.get("/index", (req, res) => {
-  res.render("login");
+  res.render("login_register");
+});
+
+app.get("/home", (req, res) => {
+  res.render("home");
 });
 
 app.post("/lr", (req, res) => {
@@ -61,23 +65,22 @@ app.post("/lr", (req, res) => {
     }
 
     //check for duplicate
-    User.findAndCountAll({
+    User.findOne({
       where: { username: _username }
-    }).then((result) => {
-      if (result.rows != 0 && result.count > 0) {
-        // Duplicate exists...
+    }).then((user) => {
+      if (user) {
+        // User already exists...
         errors.push({ msg: "Username already exists" });
       }
       //if error, back to LR page
       if (errors.length > 0) {
-        res.render("login", {
-          errors: errors,
-          propogate_username: _username.trim()
+        res.render("login_register", {
+          errors: errors
         });
         return;
       }
-      //otherwise, save new User
 
+      ////otherwise, save new User
       //turn password into hash
       bcrypt.hash(_password, 10, (err, hash) => {
         //create new user in db
@@ -87,12 +90,11 @@ app.post("/lr", (req, res) => {
           admin: 0
         });
 
-        //save user and hash to session
-        req.session.username = _username;
-        req.session.password_hash = hash;
+        //save user to session
+        req.session.user = user;
 
-        //send home page
-        res.render("home", { password: hash, username: _username });
+        //redirectt to home route
+        res.redirect("/home");
       });
     });
   }
@@ -100,46 +102,54 @@ app.post("/lr", (req, res) => {
 
   //login button pressed
   if (req.body.login_btn != null) {
+    //get the form data
+    var _username = req.body.username;
+    var _password = req.body.pw;
 
-    // app.get("/lr", (req,res) => {
+    //check for errors
+    var errors = [];
 
-    if (req.body.username.trim().length == 0) {
-      errors.push({ msg: 'username cant be blank' })
+    if (_username.trim().length == 0) {
+      errors.push({ msg: 'Username is empty' })
     }
     //short password
-    if (req.body.pw.trim().length <= 4) {
-      errors.push({ msg: "password short" });
+    if (_password.trim().length == 0) {
+      errors.push({ msg: "Password is empty" });
     }
-    ////////duplicate query search database here
-    //if(...)
-
-
-
-    /*/ the compare method takes the salt from the stored hash instead of generating
-    //  a new one, so the resulting hash will match
+    
+    //the compare method takes the salt from the stored hash instead of generating
+    //a new one, so the resulting hash will match
     //compare user password in database
+
     User.findOne({
-      where:{username:username}
-    }).then(users =>{
-      //checks password
-    bcrypt.compare(users.password_hash,pw, (err,match) => {
-      if (match) {
-        res.render("home");
-      } else {
-        errors.push({msg: 'credentials invalid'})
+      where: { username: _username.trim() }
+    }).then(user => {
+      if (user) {
+        //checks password
+        bcrypt.compare(_password, user.password_hash, (err, match) => {
+          if (match) {
+            req.session.user = user;
+            //redirectt to home route
+            res.redirect("/home");
+          } else {
+            errors.push({ msg: 'Invalid Credentials' });
+            res.render("login_register", { errors: errors });
+          }
+        });
       }
-    })
-  })*/
-
-    //if error, back to Lr page
-    if (errors.length > 0) {
-      res.render("login", {
-        errors: errors,
-        propagate_username: req.body.username.trim()
-      });
-
-      return;
-    }
+      else {
+        // User doesn't exists...
+        errors.push({ msg: "Username doesn't exists" });
+      }
+      //if error, back to lr page
+      if (errors.length > 0) {
+        res.render("login_register", {
+          errors: errors,
+          propagate_username: _username.trim()
+        });
+        return;
+      }
+    });
   }
 });
 
