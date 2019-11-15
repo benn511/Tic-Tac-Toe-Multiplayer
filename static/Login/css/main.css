@@ -47,7 +47,11 @@ a {
 
 
 .highscore_login{
-  color: yellow;
+  font-size: 28px;
+  background: -webkit-linear-gradient(rgb(255, 153, 0), rgb(255, 249, 168));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;-webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: #ff0000;
   text-align:center
 }
 
@@ -182,7 +186,7 @@ iframe {
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0,0,0,0.65);
+  background-color: rgba(0, 0, 0, 0.342);
 }
 
 .wrap-login100 {
