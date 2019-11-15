@@ -5,7 +5,6 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 var hbs = require( 'express-handlebars');
 var session = require('express-session');
-var cookieParser = require('cookie-parser');
 app = express();
 app.set('port', 3002);
 app.use(session({secret: "This is a big long secret lama string."}));
@@ -42,6 +41,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/index", (req,res) =>{
     res.render("login_register");
   } )
+
+  app.get("/login", (req, res) => {
+    res.render("login");
+  });
+
 
   app.post("/lr",(req,res)=>{
       //get form data
