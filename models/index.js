@@ -19,13 +19,13 @@ const sequelize = new Sequelize({
 });
 
 // import models
-const users = sequelize.import("./users.js");
-const highscore = sequelize.import("./Highscores.js");
+const User = sequelize.import("./users.js");
+const Highscore = sequelize.import("./Highscores.js");
 
 // associations
-users.hasMany(highscore, {foreignKey: "username_id", as: "username_id"});
-highscore.belongsTo(users, {foreignKey: "username_id"});
+User.hasMany(Highscore, {foreignKey: "username_id", as: "username_id"});
+Highscore.belongsTo(User, {foreignKey: "username_id"});
 
 module.exports = {
-  users, highscore
+  User, Highscore
 };
