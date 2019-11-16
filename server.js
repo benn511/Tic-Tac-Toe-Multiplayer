@@ -174,6 +174,11 @@ app.post("/lr", (req, res) => {
   }
 });
 
+app.get("/setup",(req,res) => {
+
+  res.render("opponent_setup");
+});
+
 app.get('/logout', (req, res) => {
   // remove user from session
   delete req.session.user;

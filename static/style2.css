@@ -16,7 +16,7 @@
 }
 table, th, td {
 	
-	color: blue;
+	color: springgreen;
   border: none;
   margin: auto;  
   padding: 2px;
@@ -24,12 +24,15 @@ table, th, td {
 }
 .btn{
    
-    border-radius: 4px;
-    background-color: #5c51f3;
+    border-radius: 32px;
+    border-color: black;
+    background-color: springgreen;
     text-align: center;
     font-size: 16px;
     padding: 10px 16px;
-    margin: 0 auto; display: inline-block; width: 30%
+    margin: auto;
+    display: block;
+    width: 30%
 }
 a{
     color:black
