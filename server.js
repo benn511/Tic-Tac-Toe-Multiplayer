@@ -174,7 +174,11 @@ app.post("/lr", (req, res) => {
   }
 });
 
-
+app.get('/logout', (req, res) => {
+  // remove user from session
+  delete req.session.user;
+  res.redirect('/login');
+});
 
 var server = app.listen(app.get('port'), function () {
   console.log("Server started...")
