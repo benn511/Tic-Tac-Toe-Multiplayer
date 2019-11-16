@@ -27,22 +27,94 @@ app.engine('html', hbs({
   extname: 'html',
   defaultView: 'default',
   layoutsDir: __dirname + '/views/layouts/',
-  partialsDir: __dirname + '/views/partials/'
+  partialsDir: __dirname + '/views/partials/',
+  helpers: {
+    if_eq: function (arg1, arg2, options) {
+      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+    },
+  }
 }));
 
 // setup static file service
 app.use(express.static(path.join(__dirname, 'static')));
 
 
-app.get("/index", (req, res) => {
-  res.render("login_register");
+app.get('/login', (req, res) => {
+  if (req.session.user) {
+    res.redirect('/home');
+  }
+  else {
+    res.render("login_register");
+  }
 });
 
-app.get("/home", (req, res) => {
-  res.render("home");
+app.get('/home', (req, res) => {
+  if (req.session.user) {
+    res.render('home', { user: req.session.user })
+  }
+  else {
+    res.render('home')
+  }
 });
 
 app.post("/lr", (req, res) => {
+
+  //login button pressed
+  if (req.body.login_btn != null) {
+    //get the form data
+    var _username = req.body.username;
+    var _password = req.body.pw;
+
+    //check for errors
+    var errors = [];
+
+    if (_username.trim().length == 0) {
+      errors.push({ msg: 'Username is empty' })
+    }
+    //short password
+    if (_password.trim().length == 0) {
+      errors.push({ msg: "Password is empty" });
+    }
+
+    //the compare method takes the salt from the stored hash instead of generating
+    //a new one, so the resulting hash will match
+    //compare user password in database
+
+    User.findOne({
+      where: { username: _username.trim() }
+    }).then(user => {
+      if (user) {
+        //checks password
+        bcrypt.compare(_password, user.password_hash, (err, match) => {
+          if (match) {
+            req.session.user = user;
+            //redirectt to home route
+            res.redirect("/home");
+            return;
+          } else {
+            errors.push({ msg: 'Invalid Credentials' });
+            res.render("login_register", { 
+              errors: errors, 
+              propogate_username: _username.trim() 
+            });
+            return;
+          }
+        });
+      }
+      else {
+        // User doesn't exists...
+        errors.push({ msg: "Username doesn't exists" });
+      }
+      //if error, back to lr page
+      if (errors.length > 0) {
+        res.render("login_register", {
+          errors: errors,
+          propagate_username: _username.trim()
+        });
+        return;
+      }
+    });
+  }
 
   //register new user
   // if statement for register button pressed
@@ -75,7 +147,8 @@ app.post("/lr", (req, res) => {
       //if error, back to LR page
       if (errors.length > 0) {
         res.render("login_register", {
-          errors: errors
+          errors: errors,
+          propogate_username: _username.trim()
         });
         return;
       }
@@ -95,60 +168,8 @@ app.post("/lr", (req, res) => {
 
         //redirectt to home route
         res.redirect("/home");
-      });
-    });
-  }
-
-
-  //login button pressed
-  if (req.body.login_btn != null) {
-    //get the form data
-    var _username = req.body.username;
-    var _password = req.body.pw;
-
-    //check for errors
-    var errors = [];
-
-    if (_username.trim().length == 0) {
-      errors.push({ msg: 'Username is empty' })
-    }
-    //short password
-    if (_password.trim().length == 0) {
-      errors.push({ msg: "Password is empty" });
-    }
-    
-    //the compare method takes the salt from the stored hash instead of generating
-    //a new one, so the resulting hash will match
-    //compare user password in database
-
-    User.findOne({
-      where: { username: _username.trim() }
-    }).then(user => {
-      if (user) {
-        //checks password
-        bcrypt.compare(_password, user.password_hash, (err, match) => {
-          if (match) {
-            req.session.user = user;
-            //redirectt to home route
-            res.redirect("/home");
-          } else {
-            errors.push({ msg: 'Invalid Credentials' });
-            res.render("login_register", { errors: errors });
-          }
-        });
-      }
-      else {
-        // User doesn't exists...
-        errors.push({ msg: "Username doesn't exists" });
-      }
-      //if error, back to lr page
-      if (errors.length > 0) {
-        res.render("login_register", {
-          errors: errors,
-          propagate_username: _username.trim()
-        });
         return;
-      }
+      });
     });
   }
 });
