@@ -53,9 +53,10 @@ app.get('/home', (req, res) => {
     res.render('home', { user: req.session.user })
   }
   else {
-    res.render('home');
+    res.redirect("/login");
   }
 });
+
 
 app.post("/lr", (req, res) => {
 
@@ -93,9 +94,9 @@ app.post("/lr", (req, res) => {
             return;
           } else {
             errors.push({ msg: 'Invalid Credentials' });
-            res.render("login_register", { 
-              errors: errors, 
-              propogate_username: _username.trim() 
+            res.render("login_register", {
+              errors: errors,
+              propogate_username: _username.trim()
             });
             return;
           }
@@ -174,20 +175,25 @@ app.post("/lr", (req, res) => {
   }
 });
 
-app.get("/setup",(req,res) => {
-
-  res.render("opponent_setup");
+app.get("/setup", (req, res) => {
+  //if user isnt logged in redirect to login page
+  if (!req.session.user) {
+    res.redirect('/login');
+  }
+  else {
+    res.render("opponent_setup");
+  }
 });
 
-/*gets user profile_pg need to set up game pg to click on user name
-to display user profile
-app.get('/profile_pg/:id', function(req, res, next) {
-	users.findByPk(req.params.id).then(i =>{
-		i.getStreaks().then(r=>{
-			res.render('profile_pg', {user:i, streaks:r})
-		})
-	})
-});*/
+//gets user profile_pg need to set up game pg to click on user name
+//to display user profile
+app.get('/profile_pg/:id', function (req, res, next) {
+  users.findByPk(req.params.id).then(i => {
+    i.getStreaks().then(r => {
+      res.render('profile_pg', { user: i, streaks: r })
+    })
+  })
+});
 
 app.get('/logout', (req, res) => {
   // remove user from session
