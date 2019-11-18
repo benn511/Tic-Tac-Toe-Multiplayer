@@ -1,4 +1,4 @@
-const { User, Highscore } = require('./models');
+const { User, Highscore, Streaks } = require('./models');
 
 const express = require('express');
 const path = require('path');
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // set up session (in-memory storage by default)
 app.use(session({ secret: "mysupersecret" }));
 
-app.use(express.static(path.join(__dirname, 'static')))
+
 // setup handlebars and the view engine for res.render calls
 // (more standard to use an extension like 'hbs' rather than
 //  'html', but the Universiry server doesn't like other extensions)
@@ -178,6 +178,16 @@ app.get("/setup",(req,res) => {
 
   res.render("opponent_setup");
 });
+
+/*gets user profile_pg need to set up game pg to click on user name
+to display user profile
+app.get('/profile_pg/:id', function(req, res, next) {
+	users.findByPk(req.params.id).then(i =>{
+		i.getStreaks().then(r=>{
+			res.render('profile_pg', {user:i, streaks:r})
+		})
+	})
+});*/
 
 app.get('/logout', (req, res) => {
   // remove user from session
