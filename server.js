@@ -53,7 +53,7 @@ app.get('/home', (req, res) => {
     res.render('home', { user: req.session.user })
   }
   else {
-    res.render('home')
+    res.render('home');
   }
 });
 
