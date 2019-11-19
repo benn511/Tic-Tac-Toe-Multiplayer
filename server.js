@@ -1,3 +1,4 @@
+//references: https://colorlib.com/etc/lf/Login_v16/index.html
 const { User, Highscore, Streaks } = require('./models');
 
 const express = require('express');
@@ -50,7 +51,19 @@ app.get('/login', (req, res) => {
 
 app.get('/home', (req, res) => {
   if (req.session.user) {
-    res.render('home', { user: req.session.user })
+    let _username = "";
+    Highscore.findAll().then(_highscore => {
+      User.findByPk(_highscore.username_id).then(user => {
+        //_username = user.username;
+      });
+      if (_highscore) {
+        res.render('home', { user: req.session.user, highscores: _highscore })
+      }
+      else {
+        // Highscore table is empty...
+        res.redirect("/home");
+      }
+    });
   }
   else {
     res.redirect("/login");
