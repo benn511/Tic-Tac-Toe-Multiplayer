@@ -14,7 +14,9 @@ server = app.listen(app.get('port'), function () {
   console.log("Server started...")
 });
 
+//setup socket.io
 var io = require('socket.io')(server);
+
 // setup body parsing
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,8 +32,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'game.html'));
 });
 
+//setup game session
 io.on('connection', (socket) => {
-
     // Create a new game room and notify the creator of game.
     socket.on('createGame', (data) => {
         socket.join(`room-${++rooms}`);
@@ -61,7 +63,7 @@ io.on('connection', (socket) => {
     });
 
     /**
-       * Notify the players about the victor.
+       * Notify the players about the winner.
        */
     socket.on('gameEnded', (data) => {
         socket.broadcast.to(data.room).emit('gameEnd', data);
