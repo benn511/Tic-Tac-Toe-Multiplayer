@@ -17,8 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // set up session (in-memory storage by default)
 app.use(session({ secret: "mysupersecret" }));
+var server = require('http').Server(app);
+const io = require('socket.io')(server);
 
-const http = require('http').Server(app);
+let rooms = 0;
 
 // setup handlebars and the view engine for res.render calls
 // (more standard to use an extension like 'hbs' rather than
@@ -39,95 +41,47 @@ app.engine('html', hbs({
 // setup static file service
 app.use(express.static(path.join(__dirname, 'static')));
 
+io.on('connection', (socket) => {
+
+  // Create a new game room and notify the creator of game.
+  socket.on('createGame', (data) => {
+      socket.join(`room-${++rooms}`);
+      socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
+  });
+
+  // Connect the Player 2 to the room he requested. Show error if room full.
+  socket.on('joinGame', function (data) {
+      var room = io.nsps['/'].adapter.rooms[data.room];
+      if (room && room.length === 1) {
+          socket.join(data.room);
+          socket.broadcast.to(data.room).emit('player1', {});
+          socket.emit('player2', { name: data.name, room: data.room })
+      } else {
+          socket.emit('err', { message: 'Sorry, The room is full!' });
+      }
+  });
+
+  /**
+     * Handle the turn played by either player and notify the other.
+     */
+  socket.on('playTurn', (data) => {
+      socket.broadcast.to(data.room).emit('turnPlayed', {
+          tile: data.tile,
+          room: data.room
+      });
+  });
+
+  /**
+     * Notify the players about the victor.
+     */
+  socket.on('gameEnded', (data) => {
+      socket.broadcast.to(data.room).emit('gameEnd', data);
+  });
+});
+
 app.get('/game', function (req, res) {
   res.render('game_pg.html');
 });
-
-let port = 5000;
-
-http.listen(port, function () {
-  console.log(`Tic-tac-toe game server running on port ${port}`);
-});
-
-
-const io = require('socket.io')(http);
-
-var players = {},
-  unmatched;
-
-function joinGame(socket) {
-
-  // Add the player to our object of players
-  players[socket.id] = {
-
-      // The opponent will either be the socket that is
-      // currently unmatched, or it will be null if no
-      // players are unmatched
-      opponent: unmatched,
-
-      // The symbol will become 'O' if the player is unmatched
-      symbol: 'X',
-
-      // The socket that is associated with this player
-      socket: socket
-  };
-
-  // Every other player is marked as 'unmatched', which means
-  // there is no another player to pair them with yet. As soon
-  // as the next socket joins, the unmatched player is paired with
-  // the new socket and the unmatched variable is set back to null
-  if (unmatched) {
-      players[socket.id].symbol = 'O';
-      players[unmatched].opponent = socket.id;
-      unmatched = null;
-  } else {
-      unmatched = socket.id;
-  }
-}
-
-// Returns the opponent socket
-function getOpponent(socket) {
-  if (!players[socket.id].opponent) {
-      return;
-  }
-  return players[
-      players[socket.id].opponent
-  ].socket;
-}
-
-io.on('connection', function (socket) {
-  console.log("Connection established...", socket.id);
-  joinGame(socket);
-
-  // Once the socket has an opponent, we can begin the game
-  if (getOpponent(socket)) {
-      socket.emit('game.begin', {
-          symbol: players[socket.id].symbol
-      });
-      getOpponent(socket).emit('game.begin', {
-          symbol: players[getOpponent(socket).id].symbol
-      });
-  }
-
-  // Listens for a move to be made and emits an event to both
-  // players after the move is completed
-  socket.on('make.move', function (data) {
-      if (!getOpponent(socket)) {
-          return;
-      }
-      console.log("Move made by : ", data);
-      socket.emit('move.made', data);
-      getOpponent(socket).emit('move.made', data);
-  });
-
-  // Emit an event to the opponent when the player leaves
-  socket.on('disconnect', function () {
-      if (getOpponent(socket)) {
-          getOpponent(socket).emit('opponent.left');
-      }
-  });
-});
-
 
 app.get('/login', (req, res) => {
   if (req.session.user) {
@@ -303,6 +257,6 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-var server = app.listen(app.get('port'), function () {
+server = app.listen(app.get('port'), function () {
   console.log("Server started...")
 });
