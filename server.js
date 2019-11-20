@@ -10,6 +10,8 @@ const Sequelize = require('sequelize');
 
 app = express();
 app.set('port', 3002);
+
+//start server
 server = app.listen(app.get('port'), function () {
   console.log("Server started...")
 });
@@ -24,6 +26,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // set up session (in-memory storage by default)
 app.use(session({ secret: "mysupersecret" }));
 
+// setup handlebars and the view engine for res.render calls
+// (more standard to use an extension like 'hbs' rather than
+//  'html', but the Universiry server doesn't like other extensions)
+app.set('view engine', 'html');
+app.engine('html', hbs({
+  extname: 'html',
+  defaultView: 'default',
+  layoutsDir: __dirname + '/views/layouts/',
+  partialsDir: __dirname + '/views/partials/',
+  helpers: {
+    if_eq: function (arg1, arg2, options) {
+      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+    },
+  }
+}));
+
+// setup static file service
+app.use(express.static(path.join(__dirname, 'static')));
+
+//room counter
 let rooms = 0;
 
 app.use(express.static('.'));
@@ -70,28 +92,14 @@ io.on('connection', (socket) => {
     });
 });
 
-// setup handlebars and the view engine for res.render calls
-// (more standard to use an extension like 'hbs' rather than
-//  'html', but the Universiry server doesn't like other extensions)
-app.set('view engine', 'html');
-app.engine('html', hbs({
-  extname: 'html',
-  defaultView: 'default',
-  layoutsDir: __dirname + '/views/layouts/',
-  partialsDir: __dirname + '/views/partials/',
-  helpers: {
-    if_eq: function (arg1, arg2, options) {
-      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-    },
+app.get('/setup', function (req, res) {
+  //if user isnt logged in redirect to login page
+  if (!req.session.user) {
+    res.redirect('/login');
   }
-}));
-
-// setup static file service
-app.use(express.static(path.join(__dirname, 'static')));
-
-
-app.get('/game', function (req, res) {
+  else {
   res.render('game_pg.html');
+  }
 });
 
 app.get('/login', (req, res) => {
@@ -241,16 +249,6 @@ app.post("/lr", (req, res) => {
         return;
       });
     });
-  }
-});
-
-app.get("/setup", (req, res) => {
-  //if user isnt logged in redirect to login page
-  if (!req.session.user) {
-    res.redirect('/login');
-  }
-  else {
-    res.render("opponent_setup");
   }
 });
 
