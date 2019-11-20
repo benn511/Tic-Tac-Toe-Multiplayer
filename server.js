@@ -10,17 +10,63 @@ const Sequelize = require('sequelize');
 
 app = express();
 app.set('port', 3002);
+server = app.listen(app.get('port'), function () {
+  console.log("Server started...")
+});
 
+var io = require('socket.io')(server);
 // setup body parsing
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // set up session (in-memory storage by default)
 app.use(session({ secret: "mysupersecret" }));
-var server = require('http').Server(app);
-const io = require('socket.io')(server);
 
 let rooms = 0;
+
+app.use(express.static('.'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'game.html'));
+});
+
+io.on('connection', (socket) => {
+
+    // Create a new game room and notify the creator of game.
+    socket.on('createGame', (data) => {
+        socket.join(`room-${++rooms}`);
+        socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
+    });
+
+    // Connect the Player 2 to the room he requested. Show error if room full.
+    socket.on('joinGame', function (data) {
+        var room = io.nsps['/'].adapter.rooms[data.room];
+        if (room && room.length === 1) {
+            socket.join(data.room);
+            socket.broadcast.to(data.room).emit('player1', {});
+            socket.emit('player2', { name: data.name, room: data.room })
+        } else {
+            socket.emit('err', { message: 'Sorry, The room is full!' });
+        }
+    });
+
+    /**
+       * Handle the turn played by either player and notify the other.
+       */
+    socket.on('playTurn', (data) => {
+        socket.broadcast.to(data.room).emit('turnPlayed', {
+            tile: data.tile,
+            room: data.room
+        });
+    });
+
+    /**
+       * Notify the players about the victor.
+       */
+    socket.on('gameEnded', (data) => {
+        socket.broadcast.to(data.room).emit('gameEnd', data);
+    });
+});
 
 // setup handlebars and the view engine for res.render calls
 // (more standard to use an extension like 'hbs' rather than
@@ -41,43 +87,6 @@ app.engine('html', hbs({
 // setup static file service
 app.use(express.static(path.join(__dirname, 'static')));
 
-io.on('connection', (socket) => {
-
-  // Create a new game room and notify the creator of game.
-  socket.on('createGame', (data) => {
-      socket.join(`room-${++rooms}`);
-      socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
-  });
-
-  // Connect the Player 2 to the room he requested. Show error if room full.
-  socket.on('joinGame', function (data) {
-      var room = io.nsps['/'].adapter.rooms[data.room];
-      if (room && room.length === 1) {
-          socket.join(data.room);
-          socket.broadcast.to(data.room).emit('player1', {});
-          socket.emit('player2', { name: data.name, room: data.room })
-      } else {
-          socket.emit('err', { message: 'Sorry, The room is full!' });
-      }
-  });
-
-  /**
-     * Handle the turn played by either player and notify the other.
-     */
-  socket.on('playTurn', (data) => {
-      socket.broadcast.to(data.room).emit('turnPlayed', {
-          tile: data.tile,
-          room: data.room
-      });
-  });
-
-  /**
-     * Notify the players about the victor.
-     */
-  socket.on('gameEnded', (data) => {
-      socket.broadcast.to(data.room).emit('gameEnd', data);
-  });
-});
 
 app.get('/game', function (req, res) {
   res.render('game_pg.html');
@@ -97,10 +106,12 @@ app.get('/home', (req, res) => {
     let _username = "";
     Highscore.findAll().then(_highscore => {
       User.findByPk(_highscore.username_id).then(user => {
-        //_username = user.username;
+        user.getUser().then(u => {
+          _username = u.username;
+        });
       });
       if (_highscore) {
-        res.render('home', { user: req.session.user, highscores: _highscore })
+        res.render('home', { user: req.session.user, highscores: _highscore, username: _username })
       }
       else {
         // Highscore table is empty...
@@ -255,8 +266,4 @@ app.get('/logout', (req, res) => {
   // remove user from session
   delete req.session.user;
   res.redirect('/login');
-});
-
-server = app.listen(app.get('port'), function () {
-  console.log("Server started...")
 });
