@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Streaks', {
-    user_id: {
+    id: {
       type: DataTypes.INTEGER,
       allowNull: true,
       primaryKey: true
@@ -26,9 +26,16 @@ module.exports = function(sequelize, DataTypes) {
     total_loses: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    username_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
-    tableName: 'Streaks',
-    timestamps: false
+    tableName: 'Streaks'
   });
 };
