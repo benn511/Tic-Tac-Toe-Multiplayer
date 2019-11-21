@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    username_id: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
@@ -36,6 +36,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'Streaks'
+    tableName: 'Streaks',
+    timestamps: false
   });
 };
