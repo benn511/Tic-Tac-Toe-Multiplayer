@@ -28,13 +28,18 @@
                     <th>Score</th>
                     <th>Date</th>
                 </tr>
-                {{#highscores}}
-                <tr>
-                    <td>{{username_id}}</td>
+                {{#User}}
+                 <tr>
+                  <td>{{username}}</td>
+                 <tr>
+             {{/User}}
+             {{#highscores}}
+                  <tr></tr>
                     <td>{{score}}</td>
                     <td>{{date}}</td>
-                </tr>
+                  </tr>
                 {{/highscores}}
+     
             </table>
 
             <div>

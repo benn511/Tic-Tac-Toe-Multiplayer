@@ -7,21 +7,23 @@
 <link rel="stylesheet" href="main.css">
 
 
+
+
 </head>
 
 <body>
 
 <div class="container">
 
-	{{#users}}
+	{{#User}}
 
 <div class="pb-2 mt-4 mb-2 border-bottom">
-	<h1>{{name}} </h1>
-	<p>(<a href="/game_pg">back</a>)</p>
+	<h1>{{username}} </h1>
+	<p>(<a href="/setup">back</a>)</p>
 </div>
-{{/users}}
+{{/User}}
 
-{{#Streaks}}
+{{#Streak}}
 <div class="row">
 	<div class="col-2">
 		<img class="full" src={{image_url}}>
@@ -32,7 +34,7 @@
 
 	</div>
 </div>
-{{/Streaks}}
+{{/Streak}}
 
 </div>
 
