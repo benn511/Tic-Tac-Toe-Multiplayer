@@ -1,4 +1,4 @@
-const { User, Highscore, Streaks } = require('./models');
+const { User, Highscore, Streak } = require('./models');
 
 const express = require('express');
 const path = require('path');
@@ -98,7 +98,7 @@ app.get('/setup', function (req, res) {
     res.redirect('/login');
   }
   else {
-  res.render('game_pg.html');
+  res.render('game_pg');
   }
 });
 
@@ -115,18 +115,22 @@ app.get('/home', (req, res) => {
   if (req.session.user) {
     let _username = "";
     Highscore.findAll().then(_highscore => {
-      User.findByPk(_highscore.username_id).then(user => {
-        user.getUser().then(u => {
-          _username = u.username;
-        });
-      });
-      if (_highscore) {
-        res.render('home', { user: req.session.user, highscores: _highscore, username: _username })
-      }
+     User.findAll().then(_username => {
+
+     //// User.findByPk(User.username_id).then(_username => {
+     ////   _username.getHighscore().then(_highscore=>{
+    
+    /// User.findAll().then(_username=> {
+    ///   Highscore.findByPk(Highscore.username_id).then(_highscore =>{
+         
+      if (true) {
+        res.render('home', { User: _username, highscores: _highscore })
+      } 
       else {
         // Highscore table is empty...
         res.redirect("/home");
-      }
+       }
+      })     
     });
   }
   else {
@@ -134,6 +138,23 @@ app.get('/home', (req, res) => {
   }
 });
 
+////////////////
+
+app.get('/profile_pg', (req, res) => {
+  if (req.session.user) {
+    let _username = "";
+    User.findByPk(17).then(_username => {
+     //Streak.findByPk(17).then(_Streak =>{
+     // res.render('profile_pg',{ User:_username, Streak:_Streak })
+
+        res.render('profile_pg',{ User:_username })
+            
+   
+
+    });
+  }
+});
+///////////////////
 
 app.post("/lr", (req, res) => {
 
@@ -252,15 +273,6 @@ app.post("/lr", (req, res) => {
   }
 });
 
-//gets user profile_pg need to set up game pg to click on user name
-//to display user profile
-app.get('/profile_pg/:id', function (req, res, next) {
-  users.findByPk(req.params.id).then(i => {
-    i.getStreaks().then(r => {
-      res.render('profile_pg', { user: i, streaks: r })
-    })
-  })
-});
 
 app.get('/logout', (req, res) => {
   // remove user from session
