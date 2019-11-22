@@ -5,7 +5,7 @@
     <title>High Scores</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="/homepage/css/style.css">
 
     <script src="https://code.jquery.com/jquery-3.3.1.js"
         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
@@ -17,7 +17,7 @@
     <div class="container">
 
         <div class="pb-2 mt-4 mb-2 border-bottom">
-            <img class="resize" src="highscore.jpg" />
+            <img class="resize" src="/homepage/images/highscore.jpg" />
         </div>
 
         <div class="">
@@ -28,11 +28,18 @@
                     <th>Score</th>
                     <th>Date</th>
                 </tr>
-                <tr>
-                    <td>{{username}}username</td>
-                    <td>{{score}}highscore</td>
-                    <td>{{date}}date</td>
-                </tr>
+                {{#User}}
+                 <tr>
+                  <td>{{username}}</td>
+                 <tr>
+             {{/User}}
+             {{#highscores}}
+                  <tr></tr>
+                    <td>{{score}}</td>
+                    <td>{{date}}</td>
+                  </tr>
+                {{/highscores}}
+     
             </table>
 
             <div>
