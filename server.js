@@ -113,18 +113,37 @@ app.get('/login', (req, res) => {
 
 app.get('/home', (req, res) => {
   if (req.session.user) {
-    let _username = "";
-    Highscore.findAll().then(_highscore => {
-     User.findAll().then(_username => {
+    let hs = {};
+    Highscore.findAll().then(highscores => {
+      
+      //Push all users with a highscore into an array called userids
+      let userids = [];
+      //Merge User info and highscore info into one array
+      let hs = [];
 
-     //// User.findByPk(User.username_id).then(_username => {
-     ////   _username.getHighscore().then(_highscore=>{
-    
-    /// User.findAll().then(_username=> {
-    ///   Highscore.findByPk(Highscore.username_id).then(_highscore =>{
-         
-      if (true) {
-        res.render('home', { User: _username, highscores: _highscore })
+      highscores.forEach(element => {
+        userids.push(element["username_id"]);
+        hs.push({score: element["score"],date: element["date"]});
+      });
+
+      //Use that array to query db
+     User.findAll({
+       where: {
+         id: userids
+       }
+     }).then(_username => {
+       
+      for (let index = 0; index < hs.length; index++) {
+        console.log(_username[index].username);
+        hs[index]["username"] = _username[index]["username"];
+        
+      }
+
+      if (_username && highscores) {
+        console.log("Rendering hs table");
+        console.log(hs);
+
+        res.render('home', { User: hs })
       } 
       else {
         // Highscore table is empty...
