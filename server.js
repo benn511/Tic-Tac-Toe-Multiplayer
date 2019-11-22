@@ -126,6 +126,7 @@ app.get('/home', (req, res) => {
      User.findAll({
        where: {
          id: userids//Find only the users that are on the highscore db
+         //score: score > 5000? filter by values
        }
      }).then(_username => {
        
@@ -136,6 +137,7 @@ app.get('/home', (req, res) => {
 
       if (_username && highscores) {
         console.log(hs);//Final merged array
+        console.log(req.session.user.username);
         res.render('home', { User: hs })
       } 
       else {

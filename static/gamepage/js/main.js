@@ -192,6 +192,18 @@
   
     // Create a new game. Emit newGame event.
     $('#new').on('click', () => {
+
+      // console.log("Clicking")
+      // if(req.session.user)
+      // {
+      //   const name = req.session.user.username;
+      //   socket.emit('createGame', { name });
+      //   player = new Player(name, P1);
+      // } else 
+      // {
+      //   console.log("User doesn't exist yet.")
+      // }
+
       const name = $('#nameNew').val();
       if (!name) {
         alert('Please enter your name.');
@@ -215,6 +227,7 @@
   
     // New Game created by current client. Update the UI and create new Game var.
     socket.on('newGame', (data) => {
+      // data.name = req.session.user.username;
       const message =
         `Hello, ${data.name}. Please ask your friend to enter Game ID: 
         ${data.room}. Waiting for player 2...`;
