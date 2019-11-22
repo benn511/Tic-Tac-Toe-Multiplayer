@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     score: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue: '0'
     },
     date: {
       type: DataTypes.TEXT,
