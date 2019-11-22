@@ -113,36 +113,29 @@ app.get('/login', (req, res) => {
 
 app.get('/home', (req, res) => {
   if (req.session.user) {
-    let hs = {};
     Highscore.findAll().then(highscores => {
       
-      //Push all users with a highscore into an array called userids
-      let userids = [];
-      //Merge User info and highscore info into one array
-      let hs = [];
+      let userids = [];//Used to query User db
+      let hs = [];//Used to merge users and hs table into one array
 
       highscores.forEach(element => {
         userids.push(element["username_id"]);
         hs.push({score: element["score"],date: element["date"]});
       });
 
-      //Use that array to query db
      User.findAll({
        where: {
-         id: userids
+         id: userids//Find only the users that are on the highscore db
        }
      }).then(_username => {
        
+      //Merge highscores and users into one
       for (let index = 0; index < hs.length; index++) {
-        console.log(_username[index].username);
         hs[index]["username"] = _username[index]["username"];
-        
       }
 
       if (_username && highscores) {
-        console.log("Rendering hs table");
-        console.log(hs);
-
+        console.log(hs);//Final merged array
         res.render('home', { User: hs })
       } 
       else {
@@ -156,8 +149,6 @@ app.get('/home', (req, res) => {
     res.redirect("/login");
   }
 });
-
-////////////////
 
 app.get('/profile_pg', (req, res) => {
   if (req.session.user) {
