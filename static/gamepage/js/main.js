@@ -4,7 +4,6 @@
     let player;
     let game;
   
-    // const socket = io.connect('http://tic-tac-toe-realtime.herokuapp.com'),
     const socket = io.connect('http://localhost:3002');
   
     class Player {
@@ -192,23 +191,11 @@
   
     // Create a new game. Emit newGame event.
     $('#new').on('click', () => {
+      console.log("Clicking")
+        const name = '<%= Session["user"] %>';;
+        socket.emit('createGame', { name });
+        player = new Player(name, P1);
 
-      // console.log("Clicking")
-      // if(req.session.user)
-      // {
-      //   const name = req.session.user.username;
-      //   socket.emit('createGame', { name });
-      //   player = new Player(name, P1);
-      // } else 
-      // {
-      //   console.log("User doesn't exist yet.")
-      // }
-
-      const name = $('#nameNew').val();
-      if (!name) {
-        alert('Please enter your name.');
-        return;
-      }
       socket.emit('createGame', { name });
       player = new Player(name, P1);
     });

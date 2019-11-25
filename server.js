@@ -51,46 +51,48 @@ let rooms = 0;
 app.use(express.static('.'));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'game.html'));
+  res.redirect('/login');
 });
+
 
 //setup game session
 io.on('connection', (socket) => {
-    // Create a new game room and notify the creator of game.
-    socket.on('createGame', (data) => {
-        socket.join(`room-${++rooms}`);
-        socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
-    });
+  // Create a new game room and notify the creator of game.
+  socket.on('createGame', (data) => {
+    socket.join(`room-${++rooms}`);
+    socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
+  });
 
-    // Connect the Player 2 to the room he requested. Show error if room full.
-    socket.on('joinGame', function (data) {
-        var room = io.nsps['/'].adapter.rooms[data.room];
-        if (room && room.length === 1) {
-            socket.join(data.room);
-            socket.broadcast.to(data.room).emit('player1', {});
-            socket.emit('player2', { name: data.name, room: data.room })
-        } else {
-            socket.emit('err', { message: 'Sorry, The room is full!' });
-        }
-    });
+  // Connect the Player 2 to the room he requested. Show error if room full.
+  socket.on('joinGame', function (data) {
+    var room = io.nsps['/'].adapter.rooms[data.room];
+    if (room && room.length === 1) {
+      socket.join(data.room);
+      socket.broadcast.to(data.room).emit('player1', {});
+      socket.emit('player2', { name: data.name, room: data.room })
+    } else {
+      socket.emit('err', { message: 'Sorry, The room is full!' });
+    }
+  });
 
-    /**
-       * Handle the turn played by either player and notify the other.
-       */
-    socket.on('playTurn', (data) => {
-        socket.broadcast.to(data.room).emit('turnPlayed', {
-            tile: data.tile,
-            room: data.room
-        });
+  /**
+     * Handle the turn played by either player and notify the other.
+     */
+  socket.on('playTurn', (data) => {
+    socket.broadcast.to(data.room).emit('turnPlayed', {
+      tile: data.tile,
+      room: data.room
     });
+  });
 
-    /**
-       * Notify the players about the winner.
-       */
-    socket.on('gameEnded', (data) => {
-        socket.broadcast.to(data.room).emit('gameEnd', data);
-    });
+  /**
+     * Notify the players about the winner.
+     */
+  socket.on('gameEnded', (data) => {
+    socket.broadcast.to(data.room).emit('gameEnd', data);
+  });
 });
+
 
 app.get('/setup', function (req, res) {
   //if user isnt logged in redirect to login page
@@ -98,9 +100,10 @@ app.get('/setup', function (req, res) {
     res.redirect('/login');
   }
   else {
-  res.render('game_pg');
+    res.render('game_pg', {});
   }
 });
+
 
 app.get('/login', (req, res) => {
   if (req.session.user) {
@@ -111,40 +114,41 @@ app.get('/login', (req, res) => {
   }
 });
 
+
 app.get('/home', (req, res) => {
   if (req.session.user) {
     Highscore.findAll().then(highscores => {
-      
+
       let userids = [];//Used to query User db
       let hs = [];//Used to merge users and hs table into one array
 
       highscores.forEach(element => {
         userids.push(element["username_id"]);
-        hs.push({score: element["score"],date: element["date"]});
+        hs.push({ score: element["score"], date: element["date"] });
       });
 
-     User.findAll({
-       where: {
-         id: userids//Find only the users that are on the highscore db
-         //score: score > 5000? filter by values
-       }
-     }).then(_username => {
-       
-      //Merge highscores and users into one
-      for (let index = 0; index < hs.length; index++) {
-        hs[index]["username"] = _username[index]["username"];
-      }
+      User.findAll({
+        where: {
+          id: userids//Find only the users that are on the highscore db
+          //score: score > 5000? filter by values
+        }
+      }).then(_username => {
 
-      if (_username && highscores) {
-        console.log(hs);//Final merged array
-        console.log(req.session.user.username);
-        res.render('home', { User: hs })
-      } 
-      else {
-        // Highscore table is empty...
-        res.redirect("/home");
-       }
-      })     
+        //Merge highscores and users into one
+        for (let index = 0; index < hs.length; index++) {
+          hs[index]["username"] = _username[index]["username"];
+        }
+
+        if (_username && highscores) {
+          console.log(hs);//Final merged array
+          console.log(req.session.user.username);
+          res.render('home', { User: hs })
+        }
+        else {
+          // Highscore table is empty...
+          res.redirect("/home");
+        }
+      })
     });
   }
   else {
@@ -152,21 +156,17 @@ app.get('/home', (req, res) => {
   }
 });
 
+
 app.get('/profile_pg', (req, res) => {
   if (req.session.user) {
-    let _username = "";
-    User.findByPk(17).then(_username => {
-     //Streak.findByPk(17).then(_Streak =>{
-     // res.render('profile_pg',{ User:_username, Streak:_Streak })
-
-        res.render('profile_pg',{ User:_username })
-            
-   
-
-    });
+    let _user = req.session.user;
+    res.render('profile_pg', { User: _user })
+  }
+  else{
+    res.redirect('/login');
   }
 });
-///////////////////
+
 
 app.post("/lr", (req, res) => {
 
