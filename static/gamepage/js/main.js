@@ -62,7 +62,6 @@
           const row = parseInt(this.id.split('_')[1][0], 10);
           const col = parseInt(this.id.split('_')[1][1], 10);
           if (!player.getCurrentTurn() || !game) {
-            alert('Its not your turn!');
             return;
           }
   
@@ -146,6 +145,7 @@
        *  We have these numbers in the Player.wins array and for the current
        *  player, we've stored this information in playsArr.
        */
+
       checkWinner() {
         const currentPlayerPositions = player.getPlaysArr();
   
@@ -193,7 +193,6 @@
     $('#new').on('click', () => {
       console.log("Clicking")
         const name = $('#nameNew').val();
-        console.log(name);
         socket.emit('createGame', { name });
         player = new Player(name, P1);
 
@@ -206,7 +205,7 @@
       const name = $('#nameJoin').val();
       const roomID = $('#room').val();
       if (!name || !roomID) {
-        alert('Please enter your name and game ID.');
+        alert('Please enter a game ID.');
         return;
       }
       socket.emit('joinGame', { name, room: roomID });
