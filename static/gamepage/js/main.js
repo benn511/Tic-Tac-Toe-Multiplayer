@@ -192,7 +192,8 @@
     // Create a new game. Emit newGame event.
     $('#new').on('click', () => {
       console.log("Clicking")
-        const name = '<%= Session["user"] %>';;
+        const name = $('#nameNew').val();
+        console.log(name);
         socket.emit('createGame', { name });
         player = new Player(name, P1);
 
@@ -217,7 +218,7 @@
       // data.name = req.session.user.username;
       const message =
         `Hello, ${data.name}. Please ask your friend to enter Game ID: 
-        ${data.room}. Waiting for player 2...`;
+        ${data.room}. Waiting for Opponent...`;
   
       // Create game for player 1
       game = new Game(data.room);

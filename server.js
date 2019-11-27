@@ -100,7 +100,8 @@ app.get('/setup', function (req, res) {
     res.redirect('/login');
   }
   else {
-    res.render('game_pg', {});
+    let _username = req.session.user.username;
+    res.render('game_pg', {Username: _username});
   }
 });
 
@@ -140,8 +141,6 @@ app.get('/home', (req, res) => {
         }
 
         if (_username && highscores) {
-          console.log(hs);//Final merged array
-          console.log(req.session.user.username);
           res.render('home', { User: hs })
         }
         else {
