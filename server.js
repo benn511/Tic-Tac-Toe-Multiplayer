@@ -75,9 +75,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  /**
-     * Handle the turn played by either player and notify the other.
-     */
+  //Handle the turn played by either player and notify the other.
   socket.on('playTurn', (data) => {
     socket.broadcast.to(data.room).emit('turnPlayed', {
       tile: data.tile,
@@ -85,11 +83,96 @@ io.on('connection', (socket) => {
     });
   });
 
-  /**
-     * Notify the players about the winner.
-     */
+  // Notify the players about the winner.
   socket.on('gameEnded', (data) => {
     socket.broadcast.to(data.room).emit('gameEnd', data);
+
+    //if game ties update db
+    if (data.tie) {
+      let p1_id;
+      let p2_id;
+      //get P1 user id from users table
+      User.findOne({
+        where: { username: data.p1 }
+      }).then(user => {
+        p1_id = user.id;
+      });
+
+      //get P2 user id from users table
+      User.findOne({
+        where: { username: data.p2 }
+      }).then(user => {
+        p2_id = user.id;
+      });
+
+      //get P1 stats from Streaks table
+      Streak.findOne({
+        where: { userid: p1_id }
+      }).then(stats => {
+
+      });
+
+      //get P2 stats from Streaks table
+      Streak.findOne({
+        where: { userid: p2_id }
+      }).then(stats => {
+
+      });
+
+      //update P1 streak table with appropriate stats
+      Streak.update(/*{ total_games: req.body.text }, */{ where: { userid: p1_id } }).then(
+
+      );
+
+      //update P2 streak table with appropriate stats
+      Streak.update(/*{ last_name: req.body.text }, */{ where: { userid: p2_id } }).then(
+
+      );
+    }
+
+    //if not a tie update db
+    else {
+      let winner_id;
+      let loser_id;
+
+      //get winner user id from users table
+      User.findOne({
+        where: { username: data.winner }
+      }).then(user => {
+        winner_id = user.id;
+      });
+
+      //get loser user id from users table
+      User.findOne({
+        where: { username: data.loser }
+      }).then(user => {
+        loser_id = user.id;
+      });
+
+      //get winner stats from Streaks table
+      Streak.findOne({
+        where: { userid: winner_id }
+      }).then(stats => {
+
+      });
+
+      //get loser stats from Streaks table
+      Streak.findOne({
+        where: { userid: loser_id }
+      }).then(stats => {
+
+      });
+
+      //update winner streak table with appropriate stats
+      Streak.update(/*{ total_games: req.body.text }, */{ where: { userid: winner_id } }).then(
+
+      );
+
+      //update loser streak table with appropriate stats
+      Streak.update(/*{ last_name: req.body.text }, */{ where: { userid: loser_id } }).then(
+
+      );
+    }
   });
 });
 
@@ -101,7 +184,7 @@ app.get('/setup', function (req, res) {
   }
   else {
     let _username = req.session.user.username;
-    res.render('game_pg', {Username: _username});
+    res.render('game_pg', { Username: _username });
   }
 });
 
@@ -161,7 +244,7 @@ app.get('/profile_pg', (req, res) => {
     let _user = req.session.user;
     res.render('profile_pg', { User: _user })
   }
-  else{
+  else {
     res.redirect('/login');
   }
 });
