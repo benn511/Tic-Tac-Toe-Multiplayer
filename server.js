@@ -86,11 +86,11 @@ io.on('connection', (socket) => {
   // Notify the players about the winner.
   socket.on('gameEnded', (data) => {
     socket.broadcast.to(data.room).emit('gameEnd', data);
+  });
 
+  socket.on('updateStats', (data) => {
     //if game ties update db
     if (data.tie) {
-      console.log(data.p1);
-      console.log(data.p2);
       //get P1 user id from users table
       User.findOne({
         where: { username: data.p1 }
@@ -137,8 +137,9 @@ io.on('connection', (socket) => {
           }).then(stats => {
             //update winner streak table with appropriate stats
             Streak.update({
-              win_streak: 0,
+              win_streak: stats.win_streak + 1,
               lose_streak: 0,
+              total_wins: stats.total_wins + 1,
               total_games: stats.total_games + 1,
             }, { where: { user_id: user.id } });
           });
@@ -155,7 +156,8 @@ io.on('connection', (socket) => {
             //update loser streak table with appropriate stats
             Streak.update({
               win_streak: 0,
-              lose_streak: 0,
+              lose_streak: stats.lose_streak + 1,
+              total_loses: stats.total_loses + 1,
               total_games: stats.total_games + 1,
             }, { where: { user_id: user.id } });
           });

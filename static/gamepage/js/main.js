@@ -12,6 +12,7 @@
       this.type = type;
       this.currentTurn = true;
       this.playsArr = 0;
+      this.hasWon = false;
     }
 
     static get wins() {
@@ -33,6 +34,35 @@
       this.currentTurn = turn;
       const message = turn ? 'Your turn' : 'Waiting for Opponent';
       $('#turn').text(message);
+    }
+
+    sendWinnerStats() {
+      socket.emit('updateStats', {
+        tie: false,
+        winner: this.getPlayerName(),
+      });
+    }
+
+    sendTiedStats() {
+      if (this.getPlayerType == P1) {
+        socket.emit('updateStats', {
+          tie: true,
+          p1: this.getPlayerName(),
+        });
+      }
+      else {
+        socket.emit('updateStats', {
+          tie: true,
+          p2: this.getPlayerName(),
+        });
+      }
+    }
+
+    sendLoserStats() {
+      socket.emit('updateStats', {
+        tie: false,
+        loser: this.getPlayerName(),
+      });
     }
 
     getPlayerName() {
@@ -112,10 +142,6 @@
       return this.roomId;
     }
 
-    getPlayer2() {
-      return this.player2;
-    }
-
     // Send an update to the opponent to update their UI's tile
     playTurn(tile) {
       const clickedTile = $(tile).attr('id');
@@ -161,10 +187,8 @@
 
       const tieMessage = 'Game Tied :(';
       if (this.checkTie()) {
+        player.sendTiedStats();
         socket.emit('gameEnded', {
-          tie: true,
-          p1: player.getPlayerName(),
-          p2: "NEEDS FIXING",
           room: this.getRoomId(),
           message: tieMessage,
         });
@@ -180,22 +204,23 @@
     // Announce the winner if the current client has won. 
     // Broadcast this on the room to let the opponent know.
     announceWinner() {
+      player.hasWon = true;
+      player.sendWinnerStats();
       const message = `${player.getPlayerName()} wins!`;
-        socket.emit('gameEnded', {
-          tie: false,
-          winner: player.getPlayerName(),
-          room: this.getRoomId(),
-          message,
-        });
+      socket.emit('gameEnded', {
+        room: this.getRoomId(),
+        message,
+      });
       alert(message);
       location.reload();
     }
 
     // End the game if the other player won.
     endGame(message) {
+      if(!player.hasWon && !this.checkTie()){
+        player.sendLoserStats();
+      }
       socket.emit('gameEnded', {
-        tie: false,
-        loser: player.getPlayerName(),
         room: this.getRoomId(),
         message,
       });
