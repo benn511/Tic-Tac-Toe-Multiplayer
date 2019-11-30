@@ -112,6 +112,10 @@
       return this.roomId;
     }
 
+    getPlayer2() {
+      return this.player2;
+    }
+
     // Send an update to the opponent to update their UI's tile
     playTurn(tile) {
       const clickedTile = $(tile).attr('id');
@@ -157,19 +161,10 @@
 
       const tieMessage = 'Game Tied :(';
       if (this.checkTie()) {
-        let _p1;
-        let _p2;
-
-        if(player.getPlayerType() == P1){
-          _p1 = player.getPlayerName();
-        }
-        else if(player.getPlayerType() == P2){
-          _p2 = player.getPlayerName();
-        }
         socket.emit('gameEnded', {
           tie: true,
-          p1: _p1,
-          p2: _p2,
+          p1: player.getPlayerName(),
+          p2: "NEEDS FIXING",
           room: this.getRoomId(),
           message: tieMessage,
         });
@@ -215,9 +210,6 @@
     const name = $('#nameNew').val();
     socket.emit('createGame', { name });
     player = new Player(name, P1);
-
-    socket.emit('createGame', { name });
-    player = new Player(name, P1);
   });
 
   // Join an existing game on the entered roomId. Emit the joinGame event.
@@ -251,6 +243,7 @@
     const message = `Hello, ${player.getPlayerName()}`;
     $('#userHello').html(message);
     player.setCurrentTurn(true);
+
   });
 
   /**

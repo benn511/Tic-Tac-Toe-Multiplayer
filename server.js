@@ -89,89 +89,78 @@ io.on('connection', (socket) => {
 
     //if game ties update db
     if (data.tie) {
-      let p1_id;
-      let p2_id;
+      console.log(data.p1);
+      console.log(data.p2);
       //get P1 user id from users table
       User.findOne({
         where: { username: data.p1 }
       }).then(user => {
-        p1_id = user.id;
+        //get P1 stats from Streaks table
+        Streak.findOne({
+          where: { user_id: user.id }
+        }).then(stats => {
+          //update P1 streak table with appropriate stats
+          Streak.update({
+            win_streak: 0,
+            lose_streak: 0,
+            total_games: stats.total_games + 1,
+          }, { where: { user_id: user.id } });
+        });
+      }).finally(() => {
+        //get P2 user id from users table
+        User.findOne({
+          where: { username: data.p2 }
+        }).then(user => {
+          //get P2 stats from Streaks table
+          Streak.findOne({
+            where: { user_id: user.id }
+          }).then(stats => {
+            //update P2 streak table with appropriate stats
+            Streak.update({
+              win_streak: 0,
+              lose_streak: 0,
+              total_games: stats.total_games + 1,
+            }, { where: { user_id: user.id } });
+          });
+        });
       });
-
-      //get P2 user id from users table
-      User.findOne({
-        where: { username: data.p2 }
-      }).then(user => {
-        p2_id = user.id;
-      });
-
-      //get P1 stats from Streaks table
-      Streak.findOne({
-        where: { userid: p1_id }
-      }).then(stats => {
-
-      });
-
-      //get P2 stats from Streaks table
-      Streak.findOne({
-        where: { userid: p2_id }
-      }).then(stats => {
-
-      });
-
-      //update P1 streak table with appropriate stats
-      Streak.update(/*{ total_games: req.body.text }, */{ where: { userid: p1_id } }).then(
-
-      );
-
-      //update P2 streak table with appropriate stats
-      Streak.update(/*{ last_name: req.body.text }, */{ where: { userid: p2_id } }).then(
-
-      );
     }
-
-    //if not a tie update db
     else {
-      let winner_id;
-      let loser_id;
-
       //get winner user id from users table
-      User.findOne({
-        where: { username: data.winner }
-      }).then(user => {
-        winner_id = user.id;
-      });
-
-      //get loser user id from users table
-      User.findOne({
-        where: { username: data.loser }
-      }).then(user => {
-        loser_id = user.id;
-      });
-
-      //get winner stats from Streaks table
-      Streak.findOne({
-        where: { userid: winner_id }
-      }).then(stats => {
-
-      });
-
-      //get loser stats from Streaks table
-      Streak.findOne({
-        where: { userid: loser_id }
-      }).then(stats => {
-
-      });
-
-      //update winner streak table with appropriate stats
-      Streak.update(/*{ total_games: req.body.text }, */{ where: { userid: winner_id } }).then(
-
-      );
-
-      //update loser streak table with appropriate stats
-      Streak.update(/*{ last_name: req.body.text }, */{ where: { userid: loser_id } }).then(
-
-      );
+      if (data.winner)
+        User.findOne({
+          where: { username: data.winner }
+        }).then(user => {
+          //get winner stats from Streaks table
+          Streak.findOne({
+            where: { user_id: user.id }
+          }).then(stats => {
+            //update winner streak table with appropriate stats
+            Streak.update({
+              win_streak: 0,
+              lose_streak: 0,
+              total_games: stats.total_games + 1,
+            }, { where: { user_id: user.id } });
+          });
+        });
+      if (data.loser) {
+        //get loser user id from users table
+        User.findOne({
+          where: { username: data.loser }
+        }).then(user => {
+          //get loser stats from Streaks table
+          Streak.findOne({
+            where: { user_id: user.id }
+          }).then(stats => {
+            //update loser streak table with appropriate stats
+            Streak.update({
+              win_streak: 0,
+              lose_streak: 0,
+              total_games: stats.total_games + 1,
+            }, { where: { user_id: user.id } });
+          });
+        });
+      }
     }
   });
 });
@@ -354,6 +343,21 @@ app.post("/lr", (req, res) => {
           username: _username,
           password_hash: hash,
           admin: 0
+        });
+
+        //get user id from users table and create user stats row in Streaks table
+        User.findOne({
+          where: { username: _username }
+        }).then(user => {
+          Streak.create({
+            user_id: user.id,
+            win_streak: 0,
+            lose_streak: 0,
+            total_games: 0,
+            total_wins: 0,
+            total_loses: 0,
+            admin: 0
+          });
         });
 
         //save user to session
