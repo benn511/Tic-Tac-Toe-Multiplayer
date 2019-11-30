@@ -217,7 +217,7 @@
 
     // End the game if the other player won.
     endGame(message) {
-      if(!player.hasWon && !this.checkTie()){
+      if (!player.hasWon && !this.checkTie()) {
         player.sendLoserStats();
       }
       socket.emit('gameEnded', {
