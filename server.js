@@ -86,27 +86,31 @@ io.on('connection', (socket) => {
   // Notify the players about the winner.
   socket.on('gameEnded', (data) => {
     socket.broadcast.to(data.room).emit('gameEnd', data);
+  });
 
+  //update db
+  socket.on('updateStats', (data) => {
     //if game ties update db
     if (data.tie) {
-      console.log(data.p1);
-      console.log(data.p2);
-      //get P1 user id from users table
-      User.findOne({
-        where: { username: data.p1 }
-      }).then(user => {
-        //get P1 stats from Streaks table
-        Streak.findOne({
-          where: { user_id: user.id }
-        }).then(stats => {
-          //update P1 streak table with appropriate stats
-          Streak.update({
-            win_streak: 0,
-            lose_streak: 0,
-            total_games: stats.total_games + 1,
-          }, { where: { user_id: user.id } });
-        });
-      }).finally(() => {
+      if (data.p1) {
+        //get P1 user id from users table
+        User.findOne({
+          where: { username: data.p1 }
+        }).then(user => {
+          //get P1 stats from Streaks table
+          Streak.findOne({
+            where: { user_id: user.id }
+          }).then(stats => {
+            //update P1 streak table with appropriate stats
+            Streak.update({
+              win_streak: 0,
+              total_ties: stats.total_ties + 1,
+              total_games: stats.total_games + 1,
+            }, { where: { user_id: user.id } });
+          });
+        })
+      }
+      else if (data.p2) {
         //get P2 user id from users table
         User.findOne({
           where: { username: data.p2 }
@@ -118,16 +122,16 @@ io.on('connection', (socket) => {
             //update P2 streak table with appropriate stats
             Streak.update({
               win_streak: 0,
-              lose_streak: 0,
+              total_ties: stats.total_ties + 1,
               total_games: stats.total_games + 1,
             }, { where: { user_id: user.id } });
           });
         });
-      });
+      }
     }
     else {
       //get winner user id from users table
-      if (data.winner)
+      if (data.winner) {
         User.findOne({
           where: { username: data.winner }
         }).then(user => {
@@ -137,32 +141,17 @@ io.on('connection', (socket) => {
           }).then(stats => {
             //update winner streak table with appropriate stats
             Streak.update({
-              win_streak: 0,
-              lose_streak: 0,
+              win_streak: stats.win_streak + 1,
               total_games: stats.total_games + 1,
-            }, { where: { user_id: user.id } });
-          });
-        });
-      if (data.loser) {
-        //get loser user id from users table
-        User.findOne({
-          where: { username: data.loser }
-        }).then(user => {
-          //get loser stats from Streaks table
-          Streak.findOne({
-            where: { user_id: user.id }
-          }).then(stats => {
-            //update loser streak table with appropriate stats
-            Streak.update({
-              win_streak: 0,
-              lose_streak: 0,
-              total_games: stats.total_games + 1,
+              total_wins: stats.total_wins + 1,
             }, { where: { user_id: user.id } });
           });
         });
       }
     }
   });
+
+    
 });
 
 
@@ -352,10 +341,9 @@ app.post("/lr", (req, res) => {
           Streak.create({
             user_id: user.id,
             win_streak: 0,
-            lose_streak: 0,
             total_games: 0,
             total_wins: 0,
-            total_loses: 0,
+            total_ties: 0,
             admin: 0
           });
         });

@@ -20,11 +20,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: '0'
     },
-    lose_streak: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: '0'
-    },
     total_games: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -34,8 +29,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: '0'
-    },
-    total_loses: {
+    },  
+    total_ties: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: '0'

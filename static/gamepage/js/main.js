@@ -12,6 +12,7 @@
       this.type = type;
       this.currentTurn = true;
       this.playsArr = 0;
+      this.hasWon = false;
     }
 
     static get wins() {
@@ -112,10 +113,6 @@
       return this.roomId;
     }
 
-    getPlayer2() {
-      return this.player2;
-    }
-
     // Send an update to the opponent to update their UI's tile
     playTurn(tile) {
       const clickedTile = $(tile).attr('id');
@@ -161,10 +158,13 @@
 
       const tieMessage = 'Game Tied :(';
       if (this.checkTie()) {
-        socket.emit('gameEnded', {
+        //update stats
+        socket.emit('updateStats', {
           tie: true,
           p1: player.getPlayerName(),
-          p2: "NEEDS FIXING",
+          p2: "user2",
+        });
+        socket.emit('gameEnded', {
           room: this.getRoomId(),
           message: tieMessage,
         });
@@ -180,13 +180,15 @@
     // Announce the winner if the current client has won. 
     // Broadcast this on the room to let the opponent know.
     announceWinner() {
+      socket.emit('updateStats', {
+        tie: false,
+        winner: player.getPlayerName(),
+      });
       const message = `${player.getPlayerName()} wins!`;
-        socket.emit('gameEnded', {
-          tie: false,
-          winner: player.getPlayerName(),
-          room: this.getRoomId(),
-          message,
-        });
+      socket.emit('gameEnded', {
+        room: this.getRoomId(),
+        message,
+      });
       alert(message);
       location.reload();
     }
@@ -194,8 +196,6 @@
     // End the game if the other player won.
     endGame(message) {
       socket.emit('gameEnded', {
-        tie: false,
-        loser: player.getPlayerName(),
         room: this.getRoomId(),
         message,
       });
@@ -229,7 +229,6 @@
     const message =
       `Hello, ${data.name}. Please ask your friend to enter Game ID: 
         ${data.room}. Waiting for Opponent...`;
-
     // Create game for player 1
     game = new Game(data.room);
     game.displayBoard(message);
@@ -243,7 +242,6 @@
     const message = `Hello, ${player.getPlayerName()}`;
     $('#userHello').html(message);
     player.setCurrentTurn(true);
-
   });
 
   /**
@@ -252,7 +250,6 @@
      */
   socket.on('player2', (data) => {
     const message = `Hello, ${data.name}`;
-
     // Create game for player 2
     game = new Game(data.room);
     game.displayBoard(message);
