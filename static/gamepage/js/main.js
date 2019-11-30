@@ -220,6 +220,9 @@
       if (!player.hasWon && !this.checkTie()) {
         player.sendLoserStats();
       }
+      else if (!player.hasWon && this.checkTie()) {
+        player.sendTiedStats();
+      }
       socket.emit('gameEnded', {
         room: this.getRoomId(),
         message,
