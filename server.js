@@ -131,6 +131,7 @@ io.on('connection', (socket) => {
     else {
       //get winner user id from users table
       if (data.winner) {
+        console.log(user.id)
         User.findOne({
           where: { username: data.winner }
         }).then(user => {
@@ -144,7 +145,18 @@ io.on('connection', (socket) => {
               lose_streak: 0,
               total_wins: stats.total_wins + 1,
               total_games: stats.total_games + 1,
-            }, { where: { user_id: user.id } });
+            }, { where: { user_id: user.id } }).then(user => {
+            /////////////////////****************** */  //update user highscore of user
+              Highscore.findOne({
+                where: { user_id: user.id }
+              }).then(stats => {
+                Highscore.update({
+                  score: stats.score + 1000
+                }, {where: { user_id: user.id }})
+                console.log(user.id)
+                //////////////////****************/
+              } )
+            })
           });
         });
       }
@@ -201,6 +213,8 @@ app.get('/home', (req, res) => {
       let userids = [];//Used to query User db
       let hs = [];//Used to merge users and hs table into one array
 
+      //add sort method
+
       highscores.forEach(element => {
         userids.push(element["username_id"]);
         hs.push({ score: element["score"], date: element["date"] });
@@ -218,8 +232,30 @@ app.get('/home', (req, res) => {
           hs[index]["username"] = _username[index]["username"];
         }
 
+
+        ///test if highscores are the only thing sorted or if everything is sorted together
+        //make sure highscore belongs to the right user check database when creating new user that he has a highscore linked to him
+        hs.sort(function(a,b) {
+          const scoreA = a.score
+          const scoreB = b.score
+          
+
+          if(scoreA>scoreB) {
+            comparison =-1
+          } else if(scoreA<scoreB) {
+            comparison = 1
+          }
+          return comparison
+        })
+        console.log(hs)
+
+
+     
+
+
         if (_username && highscores) {
           res.render('home', { User: hs })
+          
         }
         else {
           // Highscore table is empty...
