@@ -395,6 +395,9 @@ iframe {
   color: #fff;
   line-height: 1.2;
   text-transform: uppercase;
+  align-self: center;
+  align-content: center;
+  align-items: center;
 
   display: -webkit-box;
   display: -webkit-flex;
