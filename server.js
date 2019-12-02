@@ -240,20 +240,13 @@ app.get('/home', (req, res) => {
           const scoreA = a.score
           const scoreB = b.score
 
-
           if (scoreA > scoreB) {
             comparison = -1
-          } else if (scoreA < scoreB) {
+          } else if (scoreA <= scoreB) {
             comparison = 1
           }
-         else if (scoreA == scoreB) {
-          comparison = 1
-         }
           return comparison
         })
-
-
-
 
 
         if (_username && highscores) {
