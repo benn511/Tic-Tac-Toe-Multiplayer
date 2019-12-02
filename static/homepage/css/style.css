@@ -1,5 +1,5 @@
 .background{
-    background-color: rgba(0, 0, 0, 0.342);
+    background-color: rgba(0, 0, 0, 0.767);
     background: url(/homepage/images/arcade.jpg) no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -25,7 +25,7 @@ table, th, td {
 .btn{
    
     border-radius: 32px;
-    border-color: black;
+    border-color: springgreen;
     background-color: springgreen;
     text-align: center;
     font-size: 16px;
