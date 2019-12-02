@@ -147,10 +147,10 @@ io.on('connection', (socket) => {
               total_wins: stats.total_wins + 1,
               total_games: stats.total_games + 1,
             }, { where: { user_id: user.id } }).then(() => {
-            //create new user highscore based on current win streak
+              //create new user highscore based on current win streak
               if (new_WS > 0) {
                 var today = new Date();
-                var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+                var date =  (today.getMonth() + 1)+ '/' + today.getDate() + '/' + today.getFullYear();
                 Highscore.create({
                   username_id: user.id,
                   score: new_WS * 1000,
