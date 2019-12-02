@@ -1,5 +1,8 @@
 {
     "background1": {"link":"bg1.jpg"},
     "background2": {"link":"bg2.jpg"},
-    "background3": {"link":"bg3.jpg"}
+    "background3": {"link":"bg3.jpg"},
+    "background4": {"link":"bg4.jpg"},
+    "background5": {"link":"bg5.jpg"},
+    "background6": {"link":"bg6.jpg"}
 }

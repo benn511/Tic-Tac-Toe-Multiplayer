@@ -5,7 +5,12 @@
   //Event handler to randomize the games background page
   $("#randomize").click(function (func){
     func.preventDefault();
-    loadJSON("/gamepage/js/backgrounds.json");
+    if(backgrounds.length==0)
+    {
+      loadJSON("/gamepage/js/backgrounds.json");
+    } else {
+      loadRand();
+    }
     // var link = "/gamepage/images/bg1.jpg";
     // document.body.style.backgroundImage = "url("+link+")";
   })
@@ -17,17 +22,25 @@
       $.each(items, function() {//Append each link to an array
           backgrounds.push(this);
       })
-
-      var index = getRandomInt(backgrounds.length);//Randomly pick background
-      console.log(backgrounds,backgrounds[index]["link"]);
-      document.body.style.backgroundImage = "url(/gamepage/images/"+backgrounds[index]["link"]+")";//load background chosen
-      currentBackground = index;
+      loadRand();
 
     }).fail(function(){console.log("Call failed!")})
   }
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  function loadRand()
+  {
+      let index = getRandomInt(backgrounds.length);//Randomly pick background
+      while(currentBackground==index)
+      {
+        index = getRandomInt(backgrounds.length);//Randomly pick background
+      }
+      console.log(backgrounds,backgrounds[index]["link"]);
+      document.body.style.backgroundImage = "url(/gamepage/images/"+backgrounds[index]["link"]+")";//load background chosen
+      currentBackground = index;
   }
 
   const P1 = 'X';
