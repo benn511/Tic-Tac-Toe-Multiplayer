@@ -1,4 +1,13 @@
 (function init() {
+
+  $("#randomize").click(function (func){
+    func.preventDefault();
+    var link = "/gamepage/images/bg1.jpg";
+    // document.body.style.backgroundImage = "url('/gamepage/images/bg1.jpg')";
+    // document.body.style.backgroundImage = "url(${link})";
+    document.body.style.backgroundImage = "url("+link+")";
+  })
+
   const P1 = 'X';
   const P2 = 'O';
   let player;
