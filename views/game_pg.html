@@ -19,24 +19,25 @@
 		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 </head>
 
-<body class="background">
+<body class="background" style="padding-left: 50px;">
 	<br><br>
-	<button id="randomize" style="display: inline-block;" type="button" class="btn btn-primary">Change background</button>
-	<br><br><br><br>
+	<button id="randomize" style="display: inline-block;" type="button" class="btn btn-info">Change
+		background</button>
+	<br><br>
 	<div class="container"
 		style="text-align:center; position: relative; margin:0 auto; background-color: rgba(0, 0, 0, 0.65);">
 		<div class="center">
 			<br><br>
 			<div class="menu">
-					<img class="manImg" width="350" src="/login/images/tictactoetitle.png"></img>
-				<h3 style="font-size:350%; text-align:left; color: #e6e6e6;">How To Play</h3>
+				<img class="manImg" width="350" src="/login/images/tictactoetitle.png"></img>
+				<h3 style="padding-left: 5px; font-size:350%; text-align:left; color: #e6e6e6;">How To Play?</h3>
 				<ol>
-					<li style="font-size:150%; text-align:left; color: #e6e6e6;">1. Player 1 Create a new game</li>
-					<li style="font-size:150%; text-align:left; color: #e6e6e6;">2. Player 2 Enter the room id that is
+					<li style="padding-left: 15px; font-style: italic; font-size:150%; text-align:left; color: #e6e6e6;">1. Player 1 Create a new game</li>
+					<li style="padding-left: 15px; font-style: italic; font-size:150%; text-align:left; color: #e6e6e6;">2. Player 2 Enter the room id that is
 						displayed on Player 1's window.</li>
-					<li style="font-size:150%; text-align:left; color: #e6e6e6;">3. Click on join game. </li>
+					<li style="padding-left: 15px; font-style: italic; font-size:150%; text-align:left; color: #e6e6e6;">3. Click on join game. </li>
 				</ol>
-				<br><br>
+				<br>
 				<h4 style="font-size:300%; text-align:center; color: #d41872;">Create a new Game</h4>
 				<br><br>
 				<input type="hidden" id="nameNew" value="{{Username}}">
@@ -51,12 +52,12 @@
 				<br><br><br>
 				<button type="submit" style="display: inline-block;" class="login100-form-btn-2" id="join">Join
 					Game</button>
-				<br><br><br><br>
+				<br><br>
 			</div>
-			<div class="gameBoard" style="background-color: rgba(0, 0, 0, 0.65);">
-					<br><br>
-				<h2 style="font-size:300%; text-align:center; color: springgreen;"id="userHello"></h2>
-				<h3 style="font-size:300%; text-align:center; color: springgreen;"id="turn"></h3>
+			<div class="gameBoard">
+				<br><br>
+				<h2 style="font-size:300%; text-align:center; color: springgreen;" id="userHello"></h2>
+				<h3 style="font-size:300%; text-align:center; color: springgreen;" id="turn"></h3>
 				<br><br>
 				<table class="center">
 					<tr>
@@ -77,9 +78,11 @@
 				</table>
 				<br><br>
 			</div>
-			<br><br>
 		</div>
+		<br><br>
 	</div>
+
+	<br><br><br><br>
 	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/gamepage/js/main.js"></script>
