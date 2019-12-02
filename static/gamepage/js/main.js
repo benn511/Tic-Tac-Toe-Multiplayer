@@ -1,10 +1,9 @@
 (function init() {
 
+  //Event handler to randomize the games background page
   $("#randomize").click(function (func){
     func.preventDefault();
     var link = "/gamepage/images/bg1.jpg";
-    // document.body.style.backgroundImage = "url('/gamepage/images/bg1.jpg')";
-    // document.body.style.backgroundImage = "url(${link})";
     document.body.style.backgroundImage = "url("+link+")";
   })
 
