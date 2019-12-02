@@ -131,7 +131,7 @@ io.on('connection', (socket) => {
     else {
       //get winner user id from users table
       if (data.winner) {
-      //  console.log(user.id)
+        //  console.log(user.id)
         User.findOne({
           where: { username: data.winner }
         }).then(user => {
@@ -139,24 +139,25 @@ io.on('connection', (socket) => {
           Streak.findOne({
             where: { user_id: user.id }
           }).then(stats => {
+            var new_WS = stats.win_streak + 1;
             //update winner streak table with appropriate stats
             Streak.update({
               win_streak: stats.win_streak + 1,
               lose_streak: 0,
               total_wins: stats.total_wins + 1,
               total_games: stats.total_games + 1,
-            }, { where: { user_id: user.id } }).then(user => {
-            /////////////////////****************** */  //update user highscore of user
-              Highscore.findOne({
-                where: { user_id: user.id }
-              }).then(stats => {
-                Highscore.update({
-                  score: stats.score + 1000
-                }, {where: { user_id: user.id }})
-             //   console.log(user.id)
-                //////////////////****************/
-              } )
-            })
+            }, { where: { user_id: user.id } }).then(() => {
+              //create new user highscore based on current win streak
+              if (new_WS > 0) {
+                var today = new Date();
+                var date =  (today.getMonth() + 1)+ '/' + today.getDate() + '/' + today.getFullYear();
+                Highscore.create({
+                  username_id: user.id,
+                  score: new_WS * 1000,
+                  date: date,
+                });
+              }
+            });
           });
         });
       }
@@ -235,26 +236,26 @@ app.get('/home', (req, res) => {
         //sort users
         ///test if highscores are the only thing sorted or if everything is sorted together
         //make sure highscore belongs to the right user check database when creating new user that he has a highscore linked to him
-        hs.sort(function(a,b) {
+        hs.sort(function (a, b) {
           const scoreA = a.score
           const scoreB = b.score
-          
 
-          if(scoreA>scoreB) {
-            comparison =-1
-          } else if(scoreA<scoreB) {
+
+          if (scoreA > scoreB) {
+            comparison = -1
+          } else if (scoreA < scoreB) {
             comparison = 1
           }
           return comparison
         })
 
 
-     
+
 
 
         if (_username && highscores) {
           res.render('home', { User: hs })
-          
+
         }
         else {
           // Highscore table is empty...
@@ -269,20 +270,20 @@ app.get('/home', (req, res) => {
 });
 
 
-app.get('/profile_pg', function(req, res, next) {
+app.get('/profile_pg', function (req, res, next) {
   if (req.session.user) {
-  Streak.findByPk(req.session.user_id).then(streak => {
-      res.render("profile_pg", {Streak: streak});
-  })
-}
-/*
-app.get('/profile_pg', (req, res) => {
-  if (req.session.user) {
-    let _user = req.session.streak;
- //create user profile in highscores pg and just display that data
-
-    res.render('profile_pg', { Streak: _user })
-  }*/
+    Streak.findByPk(req.session.user_id).then(streak => {
+      res.render("profile_pg", { Streak: streak });
+    })
+  }
+  /*
+  app.get('/profile_pg', (req, res) => {
+    if (req.session.user) {
+      let _user = req.session.streak;
+   //create user profile in highscores pg and just display that data
+  
+      res.render('profile_pg', { Streak: _user })
+    }*/
   else {
     res.redirect('/login');
   }
