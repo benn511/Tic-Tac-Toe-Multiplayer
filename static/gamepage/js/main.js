@@ -1,6 +1,7 @@
 (function init() {
 
   var backgrounds = [];
+  var currentBackground = -1;
   //Event handler to randomize the games background page
   $("#randomize").click(function (func){
     func.preventDefault();
@@ -12,14 +13,21 @@
   function loadJSON(filename){
     $.getJSON(filename).done(function(items){
 
+      backgrounds = [];
       $.each(items, function() {//Append each link to an array
           backgrounds.push(this);
       })
-      console.log(backgrounds);
-      //Randomly pick background
-      //load background chosen
+
+      var index = getRandomInt(backgrounds.length);//Randomly pick background
+      console.log(backgrounds,backgrounds[index]["link"]);
+      document.body.style.backgroundImage = "url(/gamepage/images/"+backgrounds[index]["link"]+")";//load background chosen
+      currentBackground = index;
 
     }).fail(function(){console.log("Call failed!")})
+  }
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
   }
 
   const P1 = 'X';
