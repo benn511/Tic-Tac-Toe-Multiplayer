@@ -1,7 +1,8 @@
 (function init() {
 
   var backgrounds = [];
-  var currentBackground = -1;
+  var currentBackground = 0;
+
   //Event handler to randomize the games background page
   $("#randomize").click(function (func){
     func.preventDefault();
@@ -11,8 +12,6 @@
     } else {
       loadRand();
     }
-    // var link = "/gamepage/images/bg1.jpg";
-    // document.body.style.backgroundImage = "url("+link+")";
   })
 
   function loadJSON(filename){
@@ -38,7 +37,7 @@
       {
         index = getRandomInt(backgrounds.length);//Randomly pick background
       }
-      console.log(backgrounds,backgrounds[index]["link"]);
+      // console.log(backgrounds,backgrounds[index]["link"]);
       document.body.style.backgroundImage = "url(/gamepage/images/"+backgrounds[index]["link"]+")";//load background chosen
       currentBackground = index;
   }
