@@ -246,6 +246,9 @@ app.get('/home', (req, res) => {
           } else if (scoreA < scoreB) {
             comparison = 1
           }
+         else if (scoreA == scoreB) {
+          comparison = 1
+         }
           return comparison
         })
 
