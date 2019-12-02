@@ -131,7 +131,7 @@ io.on('connection', (socket) => {
     else {
       //get winner user id from users table
       if (data.winner) {
-        console.log(user.id)
+      //  console.log(user.id)
         User.findOne({
           where: { username: data.winner }
         }).then(user => {
@@ -153,7 +153,7 @@ io.on('connection', (socket) => {
                 Highscore.update({
                   score: stats.score + 1000
                 }, {where: { user_id: user.id }})
-                console.log(user.id)
+             //   console.log(user.id)
                 //////////////////****************/
               } )
             })
@@ -232,7 +232,7 @@ app.get('/home', (req, res) => {
           hs[index]["username"] = _username[index]["username"];
         }
 
-
+        //sort users
         ///test if highscores are the only thing sorted or if everything is sorted together
         //make sure highscore belongs to the right user check database when creating new user that he has a highscore linked to him
         hs.sort(function(a,b) {
@@ -247,7 +247,6 @@ app.get('/home', (req, res) => {
           }
           return comparison
         })
-        console.log(hs)
 
 
      
@@ -270,11 +269,20 @@ app.get('/home', (req, res) => {
 });
 
 
+app.get('/profile_pg', function(req, res, next) {
+  if (req.session.user) {
+  Streak.findByPk(req.session.user_id).then(streak => {
+      res.render("profile_pg", {Streak: streak});
+  })
+}
+/*
 app.get('/profile_pg', (req, res) => {
   if (req.session.user) {
-    let _user = req.session.user;
-    res.render('profile_pg', { User: _user })
-  }
+    let _user = req.session.streak;
+ //create user profile in highscores pg and just display that data
+
+    res.render('profile_pg', { Streak: _user })
+  }*/
   else {
     res.redirect('/login');
   }
