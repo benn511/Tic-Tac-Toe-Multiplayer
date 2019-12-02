@@ -1,11 +1,26 @@
 (function init() {
 
+  var backgrounds = [];
   //Event handler to randomize the games background page
   $("#randomize").click(function (func){
     func.preventDefault();
-    var link = "/gamepage/images/bg1.jpg";
-    document.body.style.backgroundImage = "url("+link+")";
+    loadJSON("/gamepage/js/backgrounds.json");
+    // var link = "/gamepage/images/bg1.jpg";
+    // document.body.style.backgroundImage = "url("+link+")";
   })
+
+  function loadJSON(filename){
+    $.getJSON(filename).done(function(items){
+
+      $.each(items, function() {//Append each link to an array
+          backgrounds.push(this);
+      })
+      console.log(backgrounds);
+      //Randomly pick background
+      //load background chosen
+
+    }).fail(function(){console.log("Call failed!")})
+  }
 
   const P1 = 'X';
   const P2 = 'O';
