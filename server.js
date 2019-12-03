@@ -227,6 +227,7 @@ app.get('/home', (req, res) => {
           //score: score > 5000? filter by values
         }
       }).then(_username => {
+        console.log(_username);
 
         //Merge highscores and users into one
         for (let index = 0; index < hs.length; index++) {
