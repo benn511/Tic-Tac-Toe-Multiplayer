@@ -1,12 +1,18 @@
+
 .background{
-    background-color: rgba(0, 0, 0, 0.5);
-    /* background: url(/gamepage/images/bg1.jpg) no-repeat center center fixed;  */
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    background: url(/gamepage/images/bg1.jpg) no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
   
 }
+
+label{
+    color: springgreen;
+}
+
 emp-profile{
     padding: 3%;
     margin-top: 3%;
@@ -15,11 +21,13 @@ emp-profile{
     background: #fff;
 }
 .profile-img{
-    text-align: center;
+    text-align: left;
 }
 .profile-img img{
-    width: 70%;
-    height: 100%;
+    width: 20%;
+    height: 20%;
+    float: left;
+    border: springgreen 30px;
 }
 .profile-img .file {
     position: relative;
@@ -37,8 +45,10 @@ emp-profile{
     right: 0;
     top: 0;
 }
-.profile-head h5{
-    color: #333;
+.profile-head{
+    /* color: #333; */
+    color: springgreen;
+    text-align: center;
 }
 .profile-head h6{
     color: #0062cc;
@@ -54,11 +64,11 @@ emp-profile{
 }
 .proile-rating{
     font-size: 12px;
-    color: #818182;
+    color: cyan;
     margin-top: 5%;
 }
 .proile-rating span{
-    color: #495057;
+    color: springgreen;
     font-size: 15px;
     font-weight: 600;
 }
@@ -72,20 +82,22 @@ emp-profile{
 .profile-head .nav-tabs .nav-link.active{
     border: none;
     border-bottom:2px solid #0062cc;
+    color: cyan;
 }
 .profile-work{
     padding: 14%;
     margin-top: -15%;
+    color: cyan;
 }
 .profile-work p{
     font-size: 12px;
-    color: #818182;
+    /* color: #818182; */
     font-weight: 600;
     margin-top: 10%;
 }
 .profile-work a{
     text-decoration: none;
-    color: #495057;
+    color: cyan;
     font-weight: 600;
     font-size: 14px;
 }
@@ -97,5 +109,5 @@ emp-profile{
 }
 .profile-tab p{
     font-weight: 600;
-    color: #0062cc;
+    color: cyan;
 }

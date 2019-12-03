@@ -286,6 +286,11 @@ app.get('/profile_pg', function (req, res, next) {
   }
 });
 
+app.get('/edit_profile',function (req,res,next) {
+
+  res.render("edit_profile");
+});
+
 
 app.post("/lr", (req, res) => {
 
