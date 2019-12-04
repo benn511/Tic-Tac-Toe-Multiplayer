@@ -209,34 +209,60 @@ app.get('/login', (req, res) => {
 
 app.get('/home', (req, res) => {
   if (req.session.user) {
+
+    let scores = new Map();
+    let userids = [];
+    let hs = [];
+
     Highscore.findAll().then(highscores => {
 
-      let userids = [];//Used to query User db
-      let hs = [];//Used to merge users and hs table into one array
 
       //add sort method
 
       highscores.forEach(element => {
-        userids.push(element["username_id"]);
-        hs.push({ score: element["score"], date: element["date"] });
+        if(scores.has(element["username_id"]))
+        {
+          scores.get(element["username_id"]).push({score:element["score"],date:element["date"]});//push
+        } else {
+          scores.set(element["username_id"],[{score:element["score"],date:element["date"]}]);//create
+        }
       });
+      // console.log(scores);
+
+      for(key of scores.keys())
+      {
+        console.log(key);
+        userids.push(key);
+      }
+
+      // console.log(userids);
+
 
       User.findAll({
         where: {
           id: userids//Find only the users that are on the highscore db
-          //score: score > 5000? filter by values
         }
       }).then(_username => {
+<<<<<<< HEAD
    
+=======
+>>>>>>> dev
 
-        //Merge highscores and users into one
-        for (let index = 0; index < hs.length; index++) {
-          hs[index]["username"] = _username[index]["username"];
-        }
+        _username.forEach(element => {
+          if(scores.has(element["id"]))
+          {
+            scores.get(element["id"]).forEach(dic => {
+              dic["username"] = element["username"];
+              hs.push(dic);
+            });
+          }
+        });
+        console.log(hs);
 
-        //sort users
-        ///test if highscores are the only thing sorted or if everything is sorted together
-        //make sure highscore belongs to the right user check database when creating new user that he has a highscore linked to him
+
+
+
+        //sort users, test if highscores are the only thing sorted or if everything is sorted together, make sure highscore belongs to the right user check database when creating new user that he has a highscore linked to him
         hs.sort(function (a, b) {
           const scoreA = a.score
           const scoreB = b.score
