@@ -243,11 +243,7 @@ app.get('/home', (req, res) => {
           id: userids//Find only the users that are on the highscore db
         }
       }).then(_username => {
-<<<<<<< HEAD
    
-=======
->>>>>>> dev
-
         _username.forEach(element => {
           if(scores.has(element["id"]))
           {

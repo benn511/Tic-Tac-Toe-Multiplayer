@@ -19,6 +19,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: '0'
+    },
+    profile_pic: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     tableName: 'users',
