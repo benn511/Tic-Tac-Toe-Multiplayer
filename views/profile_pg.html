@@ -36,6 +36,7 @@
 									<a href="/logout">Logout</a><br/>
 								</div>
 							</div>
+							{{#Streak}}
 							<div class="col-md-8">
 								<div class="tab-content profile-tab" id="myTabContent">
 									<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -52,7 +53,7 @@
 														<label>Win Streak</label>
 													</div>
 													<div class="col-md-6">
-														<p>winstreak:10</p>
+														<p>{{win_streak}}</p>
 													</div>
 												</div>
 												<div class="row">
@@ -60,7 +61,7 @@
 														<label>Lose Streak</label>
 													</div>
 													<div class="col-md-6">
-														<p>kshitighelani@gmail.com</p>
+														<p>{{lose_streak}}</p>
 													</div>
 												</div>
 												<div class="row">
@@ -68,7 +69,7 @@
 														<label>Total Games</label>
 													</div>
 													<div class="col-md-6">
-														<p>123 456 7890</p>
+														<p>{{total_games}}</p>
 													</div>
 												</div>
 												<div class="row">
@@ -76,7 +77,7 @@
 														<label>Total Wins</label>
 													</div>
 													<div class="col-md-6">
-														<p>Web Developer and Designer</p>
+														<p>{{total_wins}}</p>
 													</div>
 												</div>
 												<div class="row">
@@ -84,60 +85,13 @@
 															<label>Total losses</label>
 														</div>
 														<div class="col-md-6">
-															<p>Web Developer and Designer</p>
+															<p>{{total_loses}}</p>
 														</div>
 													</div>
 									</div>
-									<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-												<div class="row">
-													<div class="col-md-6">
-														<label>Experience</label>
-													</div>
-													<div class="col-md-6">
-														<p>Expert</p>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-6">
-														<label>Hourly Rate</label>
-													</div>
-													<div class="col-md-6">
-														<p>10$/hr</p>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-6">
-														<label>Total Projects</label>
-													</div>
-													<div class="col-md-6">
-														<p>230</p>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-6">
-														<label>English Level</label>
-													</div>
-													<div class="col-md-6">
-														<p>Expert</p>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-6">
-														<label>Availability</label>
-													</div>
-													<div class="col-md-6">
-														<p>6 months</p>
-													</div>
-												</div>
-										<div class="row">
-											<div class="col-md-12">
-												<label>Your Bio</label><br/>
-												<p>Your detail description</p>
-											</div>
-										</div>
-									</div>
 								</div>
 							</div>
+							{{/Streak}}
 						</div>
 					</form>           
 				</div>

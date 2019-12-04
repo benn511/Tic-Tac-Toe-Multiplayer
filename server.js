@@ -266,22 +266,13 @@ app.get('/home', (req, res) => {
   }
 });
 
-
 app.get('/profile_pg', function (req, res, next) {
   if (req.session.user) {
-    Streak.findByPk(req.session.user_id).then(streak => {
+    Streak.findOne({where: {user_id : req.session.user.id}}).then(streak => {
+      console.log(streak);
       res.render("profile_pg", { Streak: streak });
     })
-  }
-  /*
-  app.get('/profile_pg', (req, res) => {
-    if (req.session.user) {
-      let _user = req.session.streak;
-   //create user profile in highscores pg and just display that data
-  
-      res.render('profile_pg', { Streak: _user })
-    }*/
-  else {
+  } else {
     res.redirect('/login');
   }
 });
