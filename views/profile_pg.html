@@ -8,22 +8,27 @@
 	</head>
 
 	<body class="background" style="padding-left: 50px;">
+
 			<div class="container emp-profile">
 					<form method="post">
 						<div class="row">
+							{{#User}}
 							<div claFss="col-md-4">
 								<div class="profile-img">
-									<img src="https://images.unsplash.com/photo-1507499036636-f716246c2c23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80" alt=""/>
+									<img src="{{profile_pic}}" alt=""/>
 								</div>
 							</div>
+						{{/User}}
 							<div class="col-md-6">
 								<div class="profile-head">
 											<h5>
-												Username here
 											</h5>
+											{{#Highscore}}
 											<h5 class="profile-rating">
-												Best highscore? : <span>8/10</span>
+												Best highscore? : <span>{{score}}</span>
 											</h5>
+											{{/Highscore}}
+								
 								</div>
 							</div>
 						</div>
@@ -36,7 +41,7 @@
 									<a href="/logout">Logout</a><br/>
 								</div>
 							</div>
-							{{#Streak}}
+						
 							<div class="col-md-8">
 								<div class="tab-content profile-tab" id="myTabContent">
 									<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -44,10 +49,13 @@
 													<div class="col-md-6">
 														<label>User Id</label>
 													</div>
+													{{#User}}
 													<div class="col-md-6">
-														<p>My Username</p>
+														<p>{{username}}</p>
 													</div>
 												</div>
+												{{/User}}
+												{{#Streak}}
 												<div class="row">
 													<div class="col-md-6">
 														<label>Win Streak</label>
