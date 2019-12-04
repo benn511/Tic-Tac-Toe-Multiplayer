@@ -227,7 +227,7 @@ app.get('/home', (req, res) => {
           //score: score > 5000? filter by values
         }
       }).then(_username => {
-        console.log(_username);
+   
 
         //Merge highscores and users into one
         for (let index = 0; index < hs.length; index++) {
@@ -268,10 +268,14 @@ app.get('/home', (req, res) => {
 
 app.get('/profile_pg', function (req, res, next) {
   if (req.session.user) {
+    User.findOne({where: {id : req.session.user.id}}).then(user => {
+      Highscore.findOne({where: {username_id : req.session.user.id}}).then(highscore => {
     Streak.findOne({where: {user_id : req.session.user.id}}).then(streak => {
-      console.log(streak);
-      res.render("profile_pg", { Streak: streak });
+
+      res.render("profile_pg", { Streak: streak, User:user, Highscore:highscore});
     })
+  })
+})
   } else {
     res.redirect('/login');
   }
